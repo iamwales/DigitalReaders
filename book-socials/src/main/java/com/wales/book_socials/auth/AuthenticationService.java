@@ -1,5 +1,6 @@
 package com.wales.book_socials.auth;
 
+import com.wales.book_socials.email.EmailService;
 import com.wales.book_socials.role.RoleRepository;
 import com.wales.book_socials.user.Token;
 import com.wales.book_socials.user.TokenRepository;
@@ -21,6 +22,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final EmailService emailService;
 
     public void register(RegistrationRequest request) {
         var userRole = roleRepository.findByName("USER")
