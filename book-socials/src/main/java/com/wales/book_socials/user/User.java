@@ -60,7 +60,7 @@ public class User implements UserDetails, Principal {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    private String getFullName() {
+    public String getFullName() {
         return firstname + " " + lastname;
     }
 

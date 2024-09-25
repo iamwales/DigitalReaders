@@ -22,12 +22,12 @@ public class RegistrationRequest {
 
     @NotEmpty(message = "Last name should not be empty")
     @NotBlank(message = "Last name should not be empty")
-    @Email(message = "Email should be valid")
     private String lastname;
 
 
     @NotEmpty(message = "Email should not be empty")
     @NotBlank(message = "Email should not be empty")
+    @Email(message = "Email should be valid")
     private String email;
 
 
