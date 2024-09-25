@@ -24,8 +24,6 @@ public class JwtService {
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
-
-
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -66,7 +64,7 @@ public class JwtService {
                 .signWith(getSignInKey()).compact();
     }
 
-    private boolean isValidToken(String token, UserDetails userDetails) {
+    public boolean isValidToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
