@@ -32,6 +32,8 @@ public class EmailService {
     ) throws MessagingException {
         String templateName;
 
+        System.out.println("activationCode " + activationCode);
+
         if (emailTemplate == null) {
             templateName = "confirm-email";
         } else {
@@ -48,7 +50,7 @@ public class EmailService {
         Map<String, Object> properties = new HashMap<>();
         properties.put("username", username);
         properties.put("confirmationUrl", confirmationUrl);
-        properties.put("activationCode", activationCode);
+        properties.put("activation_code", activationCode);
 
         // use thymeleaf to set properties for email template
         Context context = new Context();
