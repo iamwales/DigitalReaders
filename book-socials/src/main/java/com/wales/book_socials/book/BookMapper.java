@@ -42,6 +42,8 @@ public class BookMapper {
                 .rate(bookTransactionHistory.getBook().getRate())
                 .returned(bookTransactionHistory.isReturned())
                 .returnApproved(bookTransactionHistory.isReturnApproved())
+                .borrowedBy(bookTransactionHistory.getUser().getFullName())
+                .borrowedByUserUuid(bookTransactionHistory.getUser().getUuid())
                 .build();
     }
 }

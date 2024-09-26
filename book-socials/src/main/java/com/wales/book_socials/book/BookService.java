@@ -98,10 +98,99 @@ public class BookService {
         User user = ((User) connectedUser.getPrincipal());
         if(!Objects.equals(book.getOwner().getUuid(), user.getUuid())) {
             // throw exception
-            throw new OperationNotPermittedException("You cannot update books shareable status");
+            throw new OperationNotPermittedException("You cannot update others books shareable status");
         }
         book.setSharable(!book.isSharable());
         Book savedBook = bookRepository.save(book);
         return bookMapper.toBookResponse(savedBook);
+    }
+
+    public BookResponse updateArchivedStatus(UUID bookUuid, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookUuid)
+                .orElseThrow(() -> new EntityNotFoundException("Book with the uuid %s not found".formatted(bookUuid)));
+        User user = ((User) connectedUser.getPrincipal());
+        if(!Objects.equals(book.getOwner().getUuid(), user.getUuid())) {
+            throw new OperationNotPermittedException("You cannot update others books archived status");
+        }
+        book.setArchived(!book.isArchived());
+        Book savedBook = bookRepository.save(book);
+        return bookMapper.toBookResponse(savedBook);
+    }
+
+    public BorrowedBookResponse borrowBook(UUID bookUuid, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookUuid)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
+
+        if (book.isArchived() || !book.isSharable()) {
+            throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
+        }
+        User user = ((User) connectedUser.getPrincipal());
+        if(Objects.equals(book.getOwner().getUuid(), user.getUuid())) {
+            throw new OperationNotPermittedException("You cannot borrow your own book");
+        }
+
+        final boolean isAlreadyBorrowed = bookTransactionHistoryRepository.isAlreadyBorrowedByUser(bookUuid, user.getUuid());
+
+        if (isAlreadyBorrowed) {
+            throw new OperationNotPermittedException("The requested book is already borrowed");
+        }
+
+        BookTransactionHistory bookTransactionHistory = BookTransactionHistory
+                .builder()
+                .user(user)
+                .book(book)
+                .returned(false)
+                .returnApproved(false)
+                .build();
+
+        var newBorrowedBook = bookTransactionHistoryRepository.save(bookTransactionHistory);
+
+        return bookMapper.toBorrowedBookResponse(newBorrowedBook);
+    }
+
+    public BorrowedBookResponse returnBorrowedBook(UUID bookUuid, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookUuid)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
+
+        if (book.isArchived() || !book.isSharable()) {
+            throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
+        }
+        User user = ((User) connectedUser.getPrincipal());
+        if(Objects.equals(book.getOwner().getUuid(), user.getUuid())) {
+            throw new OperationNotPermittedException("You cannot borrow or return your own book");
+        }
+
+        BookTransactionHistory bookTransactionHistory = bookTransactionHistoryRepository
+                .findByBookUuidAndUserUuid(bookUuid, user.getUuid())
+                .orElseThrow(() -> new OperationNotPermittedException("You did not borrow this book"));
+        bookTransactionHistory.setReturned(true);
+        var savedBorrowedBook = bookTransactionHistoryRepository.save(bookTransactionHistory);
+
+        return bookMapper.toBorrowedBookResponse(savedBorrowedBook);
+    }
+
+
+    public BorrowedBookResponse approveReturnedBorrowedBook(UUID bookUuid, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookUuid)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
+
+        if (book.isArchived() || !book.isSharable()) {
+            throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
+        }
+        User user = ((User) connectedUser.getPrincipal());
+
+        // This check is not necessary as it can only be done by the book owner
+        if(!Objects.equals(book.getOwner().getUuid(), user.getUuid())) {
+            throw new OperationNotPermittedException("You are not the owner of this book");
+        }
+
+        BookTransactionHistory bookTransactionHistory = bookTransactionHistoryRepository
+                .findByBookUuidAndOwnerUuid(bookUuid, user.getUuid())
+                .orElseThrow(() -> new OperationNotPermittedException("The book is not returned yet. So you cannot approve it's return"));
+        bookTransactionHistory.setReturned(true);
+
+        var savedBorrowedBook = bookTransactionHistoryRepository.save(bookTransactionHistory);
+
+        return bookMapper.toBorrowedBookResponse(savedBorrowedBook);
     }
 }
