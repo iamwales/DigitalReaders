@@ -1,5 +1,7 @@
 package com.wales.book_socials.user;
 
+import com.wales.book_socials.book.Book;
+import com.wales.book_socials.history.BookTransactionHistory;
 import com.wales.book_socials.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -59,6 +61,14 @@ public class User implements UserDetails, Principal {
     // This means when we fetch the user, we want to eagerly fetch his/her roles
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    // This means one user to many books
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books;
+
+    // One user to many book histories
+    @OneToMany(mappedBy = "user")
+    private List<BookTransactionHistory> histories;
 
     public String getFullName() {
         return firstname + " " + lastname;
