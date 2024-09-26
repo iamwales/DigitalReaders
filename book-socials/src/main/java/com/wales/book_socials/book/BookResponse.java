@@ -4,8 +4,8 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+//@Getter
+//@Setter
 @Builder
 public record BookResponse(
         UUID uuid,
@@ -26,7 +26,7 @@ public record BookResponse(
 
          boolean archived,
 
-         boolean sharable,
+         boolean shareable,
 
          byte[] cover
 ) {

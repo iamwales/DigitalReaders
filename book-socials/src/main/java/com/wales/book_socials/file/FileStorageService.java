@@ -1,9 +1,8 @@
 package com.wales.book_socials.file;
 
-import com.wales.book_socials.book.Book;
 import jakarta.annotation.Nonnull;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,15 +20,15 @@ import static java.lang.System.currentTimeMillis;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileStorageService {
 
-    @Value("${application.file.upload.photos-output-path}")
+    @Value("${application.file.uploads.photos-output-path}")
     private String fileUploadPath;
 
     public String saveFile(
             @Nonnull MultipartFile sourceFile,
-            @Nonnull UUID userUuid) {
+            @Nonnull String userUuid) {
 
         final String fileUploadSubPath = "users" + separator + userUuid;
         return uploadFile(sourceFile, fileUploadSubPath);
@@ -46,8 +45,8 @@ public class FileStorageService {
         if (!targetFolder.exists()) {
             boolean folderCreated = targetFolder.mkdirs();
 
-            if(folderCreated) {
-                log.warn("Failed to create the target folder");
+            if(!folderCreated) {
+//                log.warn("Failed to create the target folder: " + targetFolder);
                 return null;
             }
         }
@@ -58,7 +57,7 @@ public class FileStorageService {
         Path targetPath = Paths.get(targetFilePath);
         try {
             Files.write(targetPath, sourceFile.getBytes());
-            log.info("File saved to", targetFilePath);
+//            log.info("File saved to: " + targetFilePath);
             return targetFilePath;
         } catch (IOException e) {
             log.error("File was not saved", e);

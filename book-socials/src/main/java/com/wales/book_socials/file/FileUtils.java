@@ -1,6 +1,7 @@
 package com.wales.book_socials.file;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +11,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Slf4j
 public class FileUtils {
-    private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
 
     public static byte[] readFileFromLocation(String fileUrl) {
 

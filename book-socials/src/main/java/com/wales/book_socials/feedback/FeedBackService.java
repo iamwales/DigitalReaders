@@ -30,7 +30,7 @@ public class FeedBackService {
         Book book = bookRepository.findById(feedBackRequest.bookUuid())
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(feedBackRequest.bookUuid())));
 
-        if (book.isArchived() || !book.isSharable()) {
+        if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("You cannot give a feedback for an archived or not shareable book");
         }
         User user = ((User) connectedUser.getPrincipal());

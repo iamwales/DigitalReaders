@@ -103,7 +103,7 @@ public class BookService {
             // throw exception
             throw new OperationNotPermittedException("You cannot update others books shareable status");
         }
-        book.setSharable(!book.isSharable());
+        book.setShareable(!book.isShareable());
         Book savedBook = bookRepository.save(book);
         return bookMapper.toBookResponse(savedBook);
     }
@@ -124,7 +124,7 @@ public class BookService {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
 
-        if (book.isArchived() || !book.isSharable()) {
+        if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
@@ -155,7 +155,7 @@ public class BookService {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
 
-        if (book.isArchived() || !book.isSharable()) {
+        if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
@@ -177,7 +177,7 @@ public class BookService {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
 
-        if (book.isArchived() || !book.isSharable()) {
+        if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
@@ -200,8 +200,8 @@ public class BookService {
     public BookResponse uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, UUID bookUuid) {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
-        User user = ((User) connectedUser.getPrincipal());
-        var bookCover = fileStorageService.saveFile(file, user.getUuid());
+//        User user = ((User) connectedUser.getPrincipal());
+        var bookCover = fileStorageService.saveFile(file, connectedUser.getName());
         book.setBookCover(bookCover);
         var savedBook = bookRepository.save(book);
 

@@ -4,8 +4,8 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Setter
-@Getter
+//@Setter
+//@Getter
 @Builder
 public record FeedBackResponse(
         UUID uuid,

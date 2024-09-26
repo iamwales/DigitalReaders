@@ -11,7 +11,7 @@ public interface FeedBackRepository extends JpaRepository<FeedBack, UUID> {
     @Query("""
             SELECT feedBack
             FROM FeedBack feedBack
-            WHERE feedBack.book.uuid = :bookUUid
+            WHERE feedBack.book.uuid = :bookUuid
             """)
     Page<FeedBack> findAllByBook(UUID bookUuid, Pageable pageable);
 }
