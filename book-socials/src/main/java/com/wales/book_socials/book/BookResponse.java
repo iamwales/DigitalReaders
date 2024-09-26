@@ -28,6 +28,6 @@ public record BookResponse(
 
          boolean sharable,
 
-        byte[] cover
+         byte[] cover
 ) {
 }

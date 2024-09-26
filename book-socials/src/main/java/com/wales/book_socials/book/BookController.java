@@ -1,12 +1,14 @@
 package com.wales.book_socials.book;
 
 import com.wales.book_socials.common.PageResponse;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -104,6 +106,16 @@ public class BookController {
             Authentication connectedUser
     ) {
         return ResponseEntity.ok(bookService.approveReturnedBorrowedBook(bookUuid, connectedUser));
+    }
+
+    @PostMapping(value = "/cover/{bookUuid}", consumes = "multipart/form-data")
+    public ResponseEntity<BookResponse> uploadBookCoverPicture(
+            @PathVariable("bookUuid") UUID bookUuid,
+            @Parameter()
+            @RequestPart("file") MultipartFile file,
+            Authentication connectedUser
+    ) {
+        return ResponseEntity.ok(bookService.uploadBookCoverPicture(file, connectedUser, bookUuid));
     }
 
 }

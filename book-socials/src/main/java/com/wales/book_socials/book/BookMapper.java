@@ -1,5 +1,6 @@
 package com.wales.book_socials.book;
 
+import com.wales.book_socials.file.FileUtils;
 import com.wales.book_socials.history.BookTransactionHistory;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class BookMapper {
                 .sharable(book.isSharable())
                 // implement this later
 //                .bookCover(book.getBookCover())
-//                .cover()
+                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
 
