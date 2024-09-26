@@ -1,5 +1,6 @@
 package com.wales.book_socials.handler;
 
+import com.wales.book_socials.exception.OperationNotPermittedException;
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,4 +82,14 @@ public class GlobalExceptionHandler {
                         .error(e.getMessage())
                         .build());
     }
+
+    @ExceptionHandler(OperationNotPermittedException.class)
+    public ResponseEntity<ExceptionResponse> handleException(OperationNotPermittedException e) {
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(ExceptionResponse.builder()
+                        .error(e.getMessage())
+                        .build());
+    }
+
+
 }
