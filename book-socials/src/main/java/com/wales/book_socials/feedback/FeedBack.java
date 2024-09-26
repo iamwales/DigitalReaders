@@ -1,5 +1,6 @@
 package com.wales.book_socials.feedback;
 
+import com.wales.book_socials.book.Book;
 import com.wales.book_socials.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,5 +28,10 @@ public class FeedBack extends BaseEntity {
     private double note;  // 1 - 5 Stars
 
     private String comment;
+
+    // many feedbacks to one book
+    @ManyToOne
+    @JoinColumn(name = "book_uuid", foreignKey = @ForeignKey(name = "book_feedbacks_fk"))
+    private Book book;
 
 }
