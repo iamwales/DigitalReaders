@@ -12,14 +12,14 @@ import java.util.UUID;
 public interface BookTransactionHistoryRepository extends JpaRepository<BookTransactionHistory, UUID> {
     @Query("""
             SELECT history
-            FROM BookTransactionHistory
+            FROM BookTransactionHistory history
             WHERE history.user.uuid = :userUuid
             """)
     Page<BookTransactionHistory> findAllBorrowedBooks(Pageable pageable, UUID userUuid);
 
     @Query("""
             SELECT history
-            FROM BookTransactionHistory
+            FROM BookTransactionHistory history
             WHERE history.book.owner.uuid = :userUuid
             """)
     Page<BookTransactionHistory> findAllReturnedBooks(Pageable pageable, UUID userUuid);
@@ -47,7 +47,7 @@ public interface BookTransactionHistoryRepository extends JpaRepository<BookTran
     @Query("""
             SELECT transaction
             FROM BookTransactionHistory transaction
-            WHERE transaction.book.owner.uuid = :userUuid
+            WHERE transaction.book.owner.uuid = :ownerUuid
             AND transaction.book.uuid = :bookUuid
             AND transaction.returned = true
             AND transaction.returnApproved = false

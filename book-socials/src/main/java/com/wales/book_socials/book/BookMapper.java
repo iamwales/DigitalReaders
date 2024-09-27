@@ -1,5 +1,6 @@
 package com.wales.book_socials.book;
 
+import com.wales.book_socials.file.FileUtils;
 import com.wales.book_socials.history.BookTransactionHistory;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ public class BookMapper {
                 .authorName(bookRequest.authorName())
                 .synopsis(bookRequest.synopsis())
                 .archived(false)
-                .sharable(bookRequest.shareable())
+                .shareable(bookRequest.shareable())
                 .build();
     }
 
@@ -26,10 +27,10 @@ public class BookMapper {
                 .synopsis(book.getSynopsis())
                 .rate(book.getRate())
                 .archived(book.isArchived())
-                .sharable(book.isSharable())
+                .shareable(book.isShareable())
                 // implement this later
 //                .bookCover(book.getBookCover())
-//                .cover()
+                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
 

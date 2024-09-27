@@ -2,6 +2,7 @@ package com.wales.book_socials.book;
 
 import com.wales.book_socials.common.PageResponse;
 import com.wales.book_socials.exception.OperationNotPermittedException;
+import com.wales.book_socials.file.FileStorageService;
 import com.wales.book_socials.history.BookTransactionHistory;
 import com.wales.book_socials.history.BookTransactionHistoryRepository;
 import com.wales.book_socials.user.User;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +28,7 @@ public class BookService {
     private final BookMapper bookMapper;
     private final BookRepository bookRepository;
     private final BookTransactionHistoryRepository bookTransactionHistoryRepository;
+    private final FileStorageService fileStorageService;
 
     public BookResponse save(BookRequest bookRequest, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
@@ -100,7 +103,7 @@ public class BookService {
             // throw exception
             throw new OperationNotPermittedException("You cannot update others books shareable status");
         }
-        book.setSharable(!book.isSharable());
+        book.setShareable(!book.isShareable());
         Book savedBook = bookRepository.save(book);
         return bookMapper.toBookResponse(savedBook);
     }
@@ -121,7 +124,7 @@ public class BookService {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
 
-        if (book.isArchived() || !book.isSharable()) {
+        if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
@@ -152,7 +155,7 @@ public class BookService {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
 
-        if (book.isArchived() || !book.isSharable()) {
+        if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
@@ -174,7 +177,7 @@ public class BookService {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
 
-        if (book.isArchived() || !book.isSharable()) {
+        if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
@@ -192,5 +195,16 @@ public class BookService {
         var savedBorrowedBook = bookTransactionHistoryRepository.save(bookTransactionHistory);
 
         return bookMapper.toBorrowedBookResponse(savedBorrowedBook);
+    }
+
+    public BookResponse uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, UUID bookUuid) {
+        Book book = bookRepository.findById(bookUuid)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
+//        User user = ((User) connectedUser.getPrincipal());
+        var bookCover = fileStorageService.saveFile(file, connectedUser.getName());
+        book.setBookCover(bookCover);
+        var savedBook = bookRepository.save(book);
+
+        return bookMapper.toBookResponse(savedBook);
     }
 }
