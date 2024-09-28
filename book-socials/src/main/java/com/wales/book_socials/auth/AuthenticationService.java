@@ -118,6 +118,7 @@ public class AuthenticationService {
 
     @Transactional
     public void activateAccount(String token) throws MessagingException {
+        System.out.println(token);
         Token savedToken = tokenRepository.findByToken(token)
                 // implement a better exception
                 .orElseThrow(() -> new RuntimeException("Invalid Token"));

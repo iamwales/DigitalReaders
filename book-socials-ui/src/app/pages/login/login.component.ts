@@ -3,6 +3,7 @@ import { AuthenticationRequest } from '../../services/models/authentication-requ
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/services';
+import { TokenService } from '../../services/token/token.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,8 @@ import { AuthenticationService } from '../../services/services';
 export class LoginComponent {
   constructor(
     private router: Router,
-    private authService: AuthenticationService // another one
+    private authService: AuthenticationService,
+    private tokenService: TokenService
   ) {}
   register() {
     this.router.navigate(['register']);
@@ -25,14 +27,19 @@ export class LoginComponent {
       })
       .subscribe({
         next: (res) => {
-          // todo - save the token
+          this.tokenService.token = res.token as string;
           this.router.navigate(['books']);
         },
         error: (err) => {
           console.log(err);
+          if (err.error.validationErrors) {
+            this.errorMsg = err.error.validationErrors;
+          } else {
+            this.errorMsg.push(err.error.error);
+          }
         },
       });
   }
   authRequest: AuthenticationRequest = { email: '', password: '' };
-  errorMsg: Array<String> = [];
+  errorMsg: Array<string> = [];
 }
