@@ -1,4 +1,9 @@
-<div class="card" style="width: 20rem">
+<div
+  class="card border-2"
+  style="width: 20rem"
+  [class.border-success]="book.shareable"
+  [class.border-warning]="book.archived"
+>
   <img height="200" [src]="bookCover" class="card-img-top" alt="" />
 
   <div class="card-body overflow-scroll">
@@ -20,7 +25,9 @@
     <p class="card-text">{{ book.synopsis }}</p>
   </div>
 
-  <div class="card-footer d-flex gap-2 justify-between align-items-center">
+  <div
+    class="card-footer d-flex gap-2 justify-content-between align-items-center"
+  >
     <div class="d-flex gap-2">
       <app-rating [rating]="book.rate || 0"></app-rating>
       <span class="fw-bold" *ngIf="book.rate || 0 > 0">

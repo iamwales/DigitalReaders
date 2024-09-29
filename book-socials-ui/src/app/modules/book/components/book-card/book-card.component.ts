@@ -53,7 +53,7 @@ export class BookCardComponent {
 
   get bookCover() {
     if (this._book.cover) {
-      return 'data:image/jpg;base64, ' + this._bookCover;
+      return 'data:image/jpg;base64, ' + this._book.cover;
     }
     return 'https://randomwordgenerator.com/img/picture-generator/idea-3085367_640.jpg';
   }
