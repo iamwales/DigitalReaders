@@ -31,10 +31,16 @@ public class BookService {
     private final FileStorageService fileStorageService;
 
     public BookResponse save(BookRequest bookRequest, Authentication connectedUser) {
+        System.out.println("bookRequest " + bookRequest);
         User user = ((User) connectedUser.getPrincipal());
         Book book = bookMapper.toBook(bookRequest);
+
+        System.out.println("Book 1" + book);
+        System.out.println("User Book" + user);
         book.setOwner(user);
         Book savedBook = bookRepository.save(book);
+
+        System.out.println("Book 2" + book);
 
         return bookMapper.toBookResponse(savedBook);
     }
@@ -200,8 +206,9 @@ public class BookService {
     public BookResponse uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, UUID bookUuid) {
         Book book = bookRepository.findById(bookUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the uuid %s".formatted(bookUuid)));
-//        User user = ((User) connectedUser.getPrincipal());
-        var bookCover = fileStorageService.saveFile(file, connectedUser.getName());
+        User user = ((User) connectedUser.getPrincipal());
+        var bookCover = fileStorageService.saveFile(file, user.getUuid().toString());
+//        var bookCover = fileStorageService.saveFile(file, connectedUser.getName());
         book.setBookCover(bookCover);
         var savedBook = bookRepository.save(book);
 

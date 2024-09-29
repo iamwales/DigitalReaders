@@ -57,12 +57,44 @@ export class MyBooksComponent implements OnInit {
     return this.page == (this.bookResponse.totalPages as number) - 1;
   }
   editBook(book: BookResponse) {
-    throw new Error('Method not implemented.');
+    this.router.navigate(['books', 'manage', book.uuid]);
   }
   shareBook(book: BookResponse) {
-    throw new Error('Method not implemented.');
+    this.message = '';
+    this.messageType = '';
+    this.bookService
+      .updateShareableStatus({
+        bookUuid: book.uuid as string,
+      })
+      .subscribe({
+        next: () => {
+          book.shareable = !book.shareable;
+        },
+        error: (err) => {
+          if (err.error.businessErrorDescription) {
+            this.message = err.error.businessErrorDescription;
+            this.messageType = 'error';
+          }
+        },
+      });
   }
   archiveBook(book: BookResponse) {
-    throw new Error('Method not implemented.');
+    this.message = '';
+    this.messageType = '';
+    this.bookService
+      .updateArchivedStatus({
+        bookUuid: book.uuid as string,
+      })
+      .subscribe({
+        next: () => {
+          book.archived = !book.archived;
+        },
+        error: (err) => {
+          if (err.error.businessErrorDescription) {
+            this.message = err.error.businessErrorDescription;
+            this.messageType = 'error';
+          }
+        },
+      });
   }
 }

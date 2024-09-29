@@ -57,4 +57,16 @@ public class Book extends BaseEntity {
         return Math.round(rate * 10.0) / 10.0;
     }
 
+    @Override
+    public String toString() {
+        return "Book{" +
+                "title='" + title + '\'' +
+                ", authorName='" + authorName + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", synopsis='" + synopsis + '\'' +
+                ", bookCover='" + bookCover + '\'' +
+                ", archived=" + archived +
+                ", shareable=" + shareable +
+                '}';
+    }
 }
