@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { BookService } from '../../../../services/services/book.service';
 import { Router } from '@angular/router';
-import { BookService } from '../../../../services/services';
 import {
-  BookResponse,
   PageResponseBookResponse,
+  BookResponse,
 } from '../../../../services/models';
 
 @Component({
-  selector: 'app-book-list',
-  templateUrl: './book-list.component.html',
-  styleUrl: './book-list.component.scss',
+  selector: 'app-my-books',
+  templateUrl: './my-books.component.html',
+  styleUrl: './my-books.component.scss',
 })
-export class BookListComponent implements OnInit {
+export class MyBooksComponent implements OnInit {
   bookResponse: PageResponseBookResponse = {};
   page = 0;
   pageSize = 10;
@@ -23,7 +23,7 @@ export class BookListComponent implements OnInit {
   }
   findAllBooks() {
     this.bookService
-      .findAllBooks({
+      .findAllBooksByOwner({
         page: this.page,
         pageSize: this.pageSize,
       })
@@ -56,21 +56,13 @@ export class BookListComponent implements OnInit {
   get isLastPage(): boolean {
     return this.page == (this.bookResponse.totalPages as number) - 1;
   }
-  borrowBook(book: BookResponse) {
-    this.message = '';
-    this.bookService
-      .borrowBook({
-        bookUuid: book.uuid as string,
-      })
-      .subscribe({
-        next: () => {
-          this.messageType = 'success';
-          this.message = 'Book successfully added to your list';
-        },
-        error: (err) => {
-          this.messageType = 'error';
-          this.message = err.error.error;
-        },
-      });
+  editBook(book: BookResponse) {
+    throw new Error('Method not implemented.');
+  }
+  shareBook(book: BookResponse) {
+    throw new Error('Method not implemented.');
+  }
+  archiveBook(book: BookResponse) {
+    throw new Error('Method not implemented.');
   }
 }
