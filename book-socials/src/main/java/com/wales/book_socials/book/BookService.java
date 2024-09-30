@@ -196,7 +196,7 @@ public class BookService {
         BookTransactionHistory bookTransactionHistory = bookTransactionHistoryRepository
                 .findByBookUuidAndOwnerUuid(bookUuid, user.getUuid())
                 .orElseThrow(() -> new OperationNotPermittedException("The book is not returned yet. So you cannot approve it's return"));
-        bookTransactionHistory.setReturned(true);
+        bookTransactionHistory.setReturnApproved(true);
 
         var savedBorrowedBook = bookTransactionHistoryRepository.save(bookTransactionHistory);
 
