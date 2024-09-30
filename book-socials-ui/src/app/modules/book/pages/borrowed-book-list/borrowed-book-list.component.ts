@@ -28,6 +28,7 @@ export class BorrowedBookListComponent implements OnInit {
   }
   returnBorrowedBook(book: BorrowedBookResponse) {
     this.selectedBook = book;
+    this.feedBackRequest.bookUuid = book.uuid as string;
   }
   findAllBorrowedBooks() {
     this.bookService
